@@ -1,6 +1,7 @@
 import React from "react";
 import Card from "./card";
 import DropIndicator from "./drop_indicator";
+import AddCard from "./add_card";
 
 type Card = {
   id: number;
@@ -32,6 +33,7 @@ const Column: React.FC<Props> = ({ title, headingColor, column, cards, setCards 
           <Card key={card.id} {...card} />
         ))}
         <DropIndicator beforeId={-1} column={column} />
+        <AddCard column={column} setCards={setCards}/>
       </div>
     </div>
   );
