@@ -1,8 +1,11 @@
+'use client'
+
 import { FiPlus } from "react-icons/fi";
 import Button from "./button";
 import { useContext } from "react";
 import { CardContext } from "../context/card_context";
 import { AddCardContext } from "../context/add_card_context";
+import { motion } from "framer-motion";
 
 interface Props {
   text: string;
@@ -30,7 +33,7 @@ const AddCardForm: React.FC<Props> = ({ text, column }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <motion.form onSubmit={handleSubmit} layout>
       <textarea
         onChange={(e) => setText(e.target.value)}
         autoFocus
@@ -47,7 +50,7 @@ const AddCardForm: React.FC<Props> = ({ text, column }) => {
           <FiPlus/>
         </button>
       </div>
-    </form>
+    </motion.form>
   );
 }
  

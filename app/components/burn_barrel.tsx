@@ -11,35 +11,17 @@ const BurnBarrel = () => {
   const { setCards } = useContext(CardContext);
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    if (!event.dataTransfer) {
-      console.log("No data transfer found. This is a bug.");
-      return;
-    }
-    console.log("before");
     event.preventDefault();
-    console.log("after");
     setActive(true);
   }
   const handleDragLeave = () => {
-    console.log("drag leave");
     setActive(false);
   }
 
   const handleDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
-    console.log("drop drop drop");
-    try {
       const cardId = event.dataTransfer.getData("cardId");
-      
-      if (cardId) {
-        setCards((prev) => prev.filter((thatCard) => thatCard.id !== Number(cardId)));
-      } else {
-        console.error("No cardId found in dataTransfer");
-      }
-    } catch (error) {
-      console.error("An error occurred during drag end:", error);
-    } finally {
+      setCards((prev) => prev.filter((thatCard) => thatCard.id !== Number(cardId)));
       setActive(false);
-    }
   }
 
 
