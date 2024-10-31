@@ -15,16 +15,18 @@ const BurnBarrel = () => {
       console.log("No data transfer found. This is a bug.");
       return;
     }
-
+    console.log("before");
     event.preventDefault();
+    console.log("after");
     setActive(true);
   }
   const handleDragLeave = () => {
-    setActive(false);
     console.log("drag leave");
+    setActive(false);
   }
 
   const handleDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
+    console.log("drop drop drop");
     try {
       const cardId = event.dataTransfer.getData("cardId");
       
@@ -45,7 +47,7 @@ const BurnBarrel = () => {
     <div
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
-      onDragEnd={handleDragEnd}
+      onDrop={handleDragEnd}
       className={`w-56 h-56 mt-10 grid shrink-0 text-3xl place-content-center border rounded 
       ${active ? "bg-red-800/20 border-red-800 text-red-500" : "bg-neutral-500/20 text-neutral-500 border-neutral-500"}`}
     >
