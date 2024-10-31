@@ -46,20 +46,36 @@ const Column: React.FC<Props> = ({ title, headingColor, column }) => {
       item.style.opacity = '0';
     })
   }
-  const highlightIndicator = (event: React.DragEvent<HTMLDivElement>) => {
-    const indicator = getIndicator();
-    clearHighLight(indicator)
-    const thatElement = getNearestIndicator(event, indicator)
-    thatElement.element.style.opacity = '0'
-  }
   */
+  const getIndicators = () => {
+    return Array.from(document.querySelectorAll(`[data-column="${column}"]`))
+  }
+  const getNearestIndicator = (event: React.DragEvent<HTMLDivElement>, indicators: Element[]) => {
+    const theElement = indicators.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = event.clientY - (box.top + 50);
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest
+      }
+    }, {
+      offset: Number.NEGATIVE_INFINITY,
+      element: indicators[indicators.length - 1]
+    })
+    return theElement
+  }
+  const highlightIndicator = (event: React.DragEvent<HTMLDivElement>) => {
+    const indicators = getIndicators();
+    const nearestIndicator = getNearestIndicator(event, indicators);
+    nearestIndicator.element.style.opacity = '1'
+  }
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>, card: Card) => {
     event.dataTransfer.setData("cardId", card.id.toString())
   }
-
-  
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    highlightIndicator(event)
     setActive(true);
   }
   const handleDragLeave = () => {
