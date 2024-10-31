@@ -2,7 +2,8 @@ import React, { useContext } from "react";
 import Card from "./card";
 import DropIndicator from "./drop_indicator";
 import AddCard from "./add_card";
-import { CardContext } from "./board";
+import { CardContext } from "../context/card_context";
+import { AddCardContextProvider } from "../context/add_card_context";
 
 interface Props {
   title: string;
@@ -14,12 +15,6 @@ type Card = {
   title: string;
   column: string;
 };
-type CardContextType = {
-  cards: Card[];
-  setCards: React.Dispatch<React.SetStateAction<Card[]>>;
-};
-
-
 
 const Column: React.FC<Props> = ({ title, headingColor, column }) => {
 
@@ -43,7 +38,9 @@ const Column: React.FC<Props> = ({ title, headingColor, column }) => {
           <Card key={card.id} {...card} handleDragStart={handleDragStart}/>
         ))}
         <DropIndicator beforeId={-1} column={column} />
-        <AddCard column={column}/>
+        <AddCardContextProvider>
+          <AddCard column={column} />
+        </AddCardContextProvider>
       </div>
     </div>
   );

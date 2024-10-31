@@ -1,27 +1,12 @@
 "use client";
-import { createContext, useState } from "react";
 import Column from "./column";
-import { defaultCards } from "../data/data";
 import BurnBarrel from "./burn_barrel";
+import { CardContextProvider } from "../context/card_context";
 
-type Card = {
-  id: number;
-  title: string;
-  column: string;
-};
-type CardContextType = {
-  cards: Card[];
-  setCards: React.Dispatch<React.SetStateAction<Card[]>>;
-};
-
-export const CardContext = createContext<CardContextType>({} as CardContextType);
 const Board = () => {
 
-  const [cards, setCards] = useState<Card[]>(defaultCards);
-  const values: CardContextType = { cards, setCards };
-
   return (
-    <CardContext.Provider value={values}>
+    <CardContextProvider>
       <div className="w-full h-full flex gap-3 p-12 overflow-scroll">
         <Column
           title="Backlog"
@@ -33,7 +18,7 @@ const Board = () => {
         <Column title="Done" headingColor="text-green-500" column="done" />
         <BurnBarrel/>
       </div>
-    </CardContext.Provider>
+    </CardContextProvider>
   );
 };
 

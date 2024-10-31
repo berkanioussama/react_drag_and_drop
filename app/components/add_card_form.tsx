@@ -1,8 +1,8 @@
 import { FiPlus } from "react-icons/fi";
 import Button from "./button";
 import { useContext } from "react";
-import { CardContext } from "./board";
-import { AddCardContext } from "./add_card";
+import { CardContext } from "../context/card_context";
+import { AddCardContext } from "../context/add_card_context";
 
 interface Props {
   text: string;

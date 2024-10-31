@@ -2,7 +2,7 @@
 import { useContext, useState } from "react"
 import { FaFire } from "react-icons/fa"
 import { FiTrash } from "react-icons/fi"
-import { CardContext } from "./board"
+import { CardContext } from "../context/card_context"
 
 
 const BurnBarrel = () => {
