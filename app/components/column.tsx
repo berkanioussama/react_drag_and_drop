@@ -10,30 +10,78 @@ interface Props {
   headingColor: string;
   column: string;
 }
-type Card = {
-  id: number;
-  title: string;
-  column: string;
-};
 
 const Column: React.FC<Props> = ({ title, headingColor, column }) => {
 
-  const {cards} = useContext(CardContext);
+  const {cards, setCards} = useContext(CardContext);
 
   const [active, setActive] = React.useState(false);
   const filteredCards = cards.filter((card) => card.column === column);
 
+  /*
+  const getIndicator = () => {
+    return Array.from(document.querySelectorAll(`[data-column="${column}"]`))
+  }
+  const getNearestIndicator = (event: React.DragEvent<HTMLDivElement>, indicator: Element[]) => {
+    const DISTANCE_OFFSET = 50
+    const element = indicator.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = event.clientY - (box.top + DISTANCE_OFFSET);
+
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest
+      }
+    }, {
+      offset: Number.NEGATIVE_INFINITY,
+      element: indicator[indicator.length - 1]
+    })
+
+    return element
+  }
+  const clearHighLight = (elements: Element[]) => {
+    const indicators = elements || getIndicator();
+    indicators.forEach((item) => {
+      item.style.opacity = '0';
+    })
+  }
+  const highlightIndicator = (event: React.DragEvent<HTMLDivElement>) => {
+    const indicator = getIndicator();
+    clearHighLight(indicator)
+    const thatElement = getNearestIndicator(event, indicator)
+    thatElement.element.style.opacity = '0'
+  }
+  */
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>, card: Card) => {
     event.dataTransfer.setData("cardId", card.id.toString())
   }
 
+  
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setActive(true);
+  }
+  const handleDragLeave = () => {
+    setActive(false);
+  }
+  const handleDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
+    const cardId = event.dataTransfer.getData("cardId");
+    setActive(false);
+  }
+
   return (
-    <div className="w-56 shrink-0">
+    <div
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDragEnd}
+      className="w-56 shrink-0"
+    >
       <div className="flex items-center justify-between mb-3">
         <h3 className={`font-medium ${headingColor}`}>{title}</h3>
         <span className="text-sm text-neutral-400 rounded">{filteredCards.length}</span>
       </div>
-      <div className={`w-full h-full transition-colors ${active ? "bg-neutral-800/50" : "bg-neutral-800/0"}`}>
+      <div className={`w-full h-full transition-colors ${active ? "bg-neutral-800/70" : "bg-neutral-800/0"}`}>
         {filteredCards.map((card) => (
           <Card key={card.id} {...card} handleDragStart={handleDragStart}/>
         ))}
