@@ -1,26 +1,31 @@
 'use client'
 
-import { useState } from "react";
+import { createContext, useState } from "react";
 import Button from "./button";
 import AddCardForm from "./add_card_form";
 
-type Card = {
-  id: number;
-  title: string;
-  column: string;
-}
 interface Props {
   column: string
-  setCards: React.Dispatch<React.SetStateAction<Card[]>>
 }
-const AddCard: React.FC<Props> = ({ column, setCards }) => {
+
+type AddCardContextType = {
+  setText: React.Dispatch<React.SetStateAction<string>>
+  setAdding: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const AddCardContext = createContext<AddCardContextType>({} as AddCardContextType);
+const AddCard: React.FC<Props> = ({ column }) => {
 
   const [text, setText] = useState('');
   const [adding, setAdding] = useState(false);
+
+  const values: AddCardContextType = {setText, setAdding};
   return (
-    <div>
-      {adding ? <AddCardForm text={text} setText={setText} setAdding={setAdding} setCard={setCards} column={column} /> : <Button text="Add Card" setAdding={setAdding} value={true}/> }
-    </div>
+    <AddCardContext.Provider value={values}>
+      <div>
+        {adding ? <AddCardForm text={text} column={column} /> : <Button text="Add Card" value={true}/> }
+      </div>
+    </AddCardContext.Provider>
   );
 }
  

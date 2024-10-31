@@ -1,12 +1,16 @@
+import { useContext } from "react";
 import { FiPlus } from "react-icons/fi";
+import { AddCardContext } from "./add_card";
 
 interface Props {
   text: string;
-  setAdding: React.Dispatch<React.SetStateAction<boolean>>
   value: boolean
 }
 
-const Button: React.FC<Props> = ({ text , setAdding, value}) => {
+const Button: React.FC<Props> = ({ text, value }) => {
+  
+  const { setAdding } = useContext(AddCardContext);
+
   return (
     <button
       onClick={() => setAdding(value)}
