@@ -19,4 +19,14 @@ export const defaultCards = [
     title: "Task 4",
     column: "backlog",
   },
+  {
+    id: 5,
+    title: "Task 5",
+    column: "todo",
+  },
+  {
+    id: 6,
+    title: "Task 6",
+    column: "todo",
+  },
 ]

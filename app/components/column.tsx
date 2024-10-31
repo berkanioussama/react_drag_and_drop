@@ -68,7 +68,7 @@ const Column: React.FC<Props> = ({ title, headingColor, column }) => {
   const highlightIndicator = (event: React.DragEvent<HTMLDivElement>) => {
     const indicators = getIndicators();
     const nearestIndicator = getNearestIndicator(event, indicators);
-    nearestIndicator.element.style.opacity = '1'
+    (nearestIndicator.element as HTMLElement).style.opacity = '1'
   }
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>, card: Card) => {
     event.dataTransfer.setData("cardId", card.id.toString())
