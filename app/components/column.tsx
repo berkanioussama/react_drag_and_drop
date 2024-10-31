@@ -4,6 +4,7 @@ import DropIndicator from "./drop_indicator";
 import AddCard from "./add_card";
 import { CardContext } from "../context/card_context";
 import { AddCardContextProvider } from "../context/add_card_context";
+import { clear } from "console";
 
 interface Props {
   title: string;
@@ -48,9 +49,9 @@ const Column: React.FC<Props> = ({ title, headingColor, column }) => {
   }
   */
   const getIndicators = () => {
-    return Array.from(document.querySelectorAll(`[data-column="${column}"]`))
+    return Array.from(document.querySelectorAll(`[data-column="${column}"]`)) as HTMLElement[]
   }
-  const getNearestIndicator = (event: React.DragEvent<HTMLDivElement>, indicators: Element[]) => {
+  const getNearestIndicator = (event: React.DragEvent<HTMLDivElement>, indicators: HTMLElement[]) => {
     const theElement = indicators.reduce((closest, child) => {
       const box = child.getBoundingClientRect();
       const offset = event.clientY - (box.top + 50);
@@ -65,10 +66,18 @@ const Column: React.FC<Props> = ({ title, headingColor, column }) => {
     })
     return theElement
   }
+
+  const clearOtherHightLight = (oldIndicators: HTMLElement[] = []) => {
+    const indicators = oldIndicators.length > 0 ? oldIndicators : getIndicators();
+    indicators.forEach((item) => {
+      item.style.opacity = '0';
+    })
+  }
   const highlightIndicator = (event: React.DragEvent<HTMLDivElement>) => {
     const indicators = getIndicators();
-    const nearestIndicator = getNearestIndicator(event, indicators);
-    (nearestIndicator.element as HTMLElement).style.opacity = '1'
+    clearOtherHightLight(indicators as HTMLElement[]);
+    const nearestIndicator = getNearestIndicator(event, indicators as HTMLElement[]);
+    nearestIndicator.element.style.opacity = '1'
   }
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>, card: Card) => {
     event.dataTransfer.setData("cardId", card.id.toString())
@@ -80,10 +89,12 @@ const Column: React.FC<Props> = ({ title, headingColor, column }) => {
   }
   const handleDragLeave = () => {
     setActive(false);
+    clearOtherHightLight()
   }
   const handleDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
     const cardId = event.dataTransfer.getData("cardId");
     setActive(false);
+    clearOtherHightLight()
   }
 
   return (
