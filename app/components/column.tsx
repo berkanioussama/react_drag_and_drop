@@ -1,10 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Card from "./card";
 import DropIndicator from "./drop_indicator";
 import AddCard from "./add_card";
 import { CardContext } from "../context/card_context";
 import { AddCardContextProvider } from "../context/add_card_context";
-import { clear } from "console";
 
 interface Props {
   title: string;
@@ -16,45 +15,16 @@ const Column: React.FC<Props> = ({ title, headingColor, column }) => {
 
   const {cards, setCards} = useContext(CardContext);
 
-  const [active, setActive] = React.useState(false);
-  const filteredCards = cards.filter((card) => card.column === column);
+  const [active, setActive] = useState(false);
 
-  /*
-  const getIndicator = () => {
-    return Array.from(document.querySelectorAll(`[data-column="${column}"]`))
-  }
-  const getNearestIndicator = (event: React.DragEvent<HTMLDivElement>, indicator: Element[]) => {
-    const DISTANCE_OFFSET = 50
-    const element = indicator.reduce((closest, child) => {
-      const box = child.getBoundingClientRect();
-      const offset = event.clientY - (box.top + DISTANCE_OFFSET);
-
-      if (offset < 0 && offset > closest.offset) {
-        return { offset: offset, element: child };
-      } else {
-        return closest
-      }
-    }, {
-      offset: Number.NEGATIVE_INFINITY,
-      element: indicator[indicator.length - 1]
-    })
-
-    return element
-  }
-  const clearHighLight = (elements: Element[]) => {
-    const indicators = elements || getIndicator();
-    indicators.forEach((item) => {
-      item.style.opacity = '0';
-    })
-  }
-  */
   const getIndicators = () => {
     return Array.from(document.querySelectorAll(`[data-column="${column}"]`)) as HTMLElement[]
   }
   const getNearestIndicator = (event: React.DragEvent<HTMLDivElement>, indicators: HTMLElement[]) => {
+    const DISTANCE_OFFSET = 50;
     const theElement = indicators.reduce((closest, child) => {
       const box = child.getBoundingClientRect();
-      const offset = event.clientY - (box.top + 50);
+      const offset = event.clientY - (box.top + DISTANCE_OFFSET);
       if (offset < 0 && offset > closest.offset) {
         return { offset: offset, element: child };
       } else {
@@ -76,7 +46,7 @@ const Column: React.FC<Props> = ({ title, headingColor, column }) => {
   const highlightIndicator = (event: React.DragEvent<HTMLDivElement>) => {
     const indicators = getIndicators();
     clearOtherHightLight(indicators as HTMLElement[]);
-    const nearestIndicator = getNearestIndicator(event, indicators as HTMLElement[]);
+    const nearestIndicator = getNearestIndicator(event as React.DragEvent<HTMLDivElement>, indicators as HTMLElement[] );
     nearestIndicator.element.style.opacity = '1'
   }
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>, card: Card) => {
@@ -84,18 +54,41 @@ const Column: React.FC<Props> = ({ title, headingColor, column }) => {
   }
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    highlightIndicator(event)
+    highlightIndicator(event as React.DragEvent<HTMLDivElement>);
     setActive(true);
   }
   const handleDragLeave = () => {
-    setActive(false);
     clearOtherHightLight()
+    setActive(false);
   }
   const handleDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
-    const cardId = event.dataTransfer.getData("cardId");
     setActive(false);
     clearOtherHightLight()
+    const cardId = event.dataTransfer.getData("cardId");
+    const indicators = getIndicators();
+    const { element } = getNearestIndicator(event as React.DragEvent<HTMLDivElement>, indicators as HTMLElement[]);
+    const before = parseInt(element.dataset.before || "-1", 10)
+
+    if (before !== Number(cardId)) {
+      let copy = [...cards]
+      let cardToTransfer = copy.find(thisCard => thisCard.id === Number(cardId))
+      if (!cardToTransfer) return
+      cardToTransfer = { ...cardToTransfer, column }
+      
+      copy = copy.filter(thisCard => thisCard.id !== Number(cardId))
+      const moveToBack = before === -1
+      if (moveToBack) {
+        copy.push(cardToTransfer)
+      } else {
+        const insertAtIndex = copy.findIndex(thisCard => thisCard.id === Number(before))
+        if (insertAtIndex === undefined) return
+
+        copy.splice(insertAtIndex, 0, cardToTransfer)
+      }
+      setCards(copy)
+    }
   }
+  const filteredCards = cards.filter((card) => card.column === column);
 
   return (
     <div
