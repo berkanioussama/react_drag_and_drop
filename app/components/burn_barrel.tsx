@@ -24,7 +24,6 @@ const BurnBarrel = () => {
       setActive(false);
   }
 
-
   return (
     <div
       onDragOver={handleDragOver}
